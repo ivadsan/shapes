@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #canvas {
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <div>
+      <select id="shape">
+        <option value="1">Shape 1</option>
+        <option value="2">Shape 2</option>
+        <option value="3">Shape 3</option>
+      </select>
+      <button onclick="animateLines();">Start</button>
+      <button onclick="clearCanvas();">Reset</button>
+    </div>
+  </body>
+  <script>
+    const width = 500;
+    const height = 500;
+
+    const canvas = document.querySelector("#canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    let index = 0;
+    let totalLines = 0;
+    let lineSpacing = 0;
+
+    function drawLine(color, moveToX, moveToY, lineToX, lineToY) {
+      ctx.beginPath();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = color;
+      ctx.moveTo(moveToX, moveToY);
+      ctx.lineTo(lineToX, lineToY);
+      ctx.stroke();
+    }
+
+    const shapes = {
+      1: {
+        totalLines: 100,
+        lineSpacing: 20,
+        draw: function () {
+          drawLine("#777", 0, height - index * this.lineSpacing, 0 + index * this.lineSpacing, height);
+          drawLine("#777", 0, index * this.lineSpacing, index * this.lineSpacing, 0);
+        },
+      },
+      2: {
+        totalLines: 50,
+        lineSpacing: 5,
+        draw: function () {
+          drawLine("#777", width / 2, index * this.lineSpacing, width / 2 - index * this.lineSpacing, height / 2);
+          drawLine("#777", width / 2, index * this.lineSpacing, width / 2 + index * this.lineSpacing, height / 2);
+          drawLine("#777", width / 2, height - index * this.lineSpacing, width / 2 - index * this.lineSpacing, height / 2);
+          drawLine("#777", width / 2, height - index * this.lineSpacing, width / 2 + index * this.lineSpacing, height / 2);
+        },
+      },
+      3: {
+        totalLines: 50,
+        lineSpacing: 10,
+        draw: function () {
+          drawLine("#777", 0, 0 + index * this.lineSpacing, index * this.lineSpacing, 500);
+          drawLine("#777", 500, 0 + index * this.lineSpacing, 500 - index * this.lineSpacing, 500);
+          drawLine("#777", 0 + index * this.lineSpacing, 0, 0, 500 - index * this.lineSpacing);
+          drawLine("#777", 500 - index * this.lineSpacing, 0, 500, 500 - index * this.lineSpacing);
+        },
+      },
+    };
+
+    function animateLines() {
+      const shape = document.getElementById("shape").value;
+      const selectedShape = shapes[shape];
+
+      if (selectedShape) {
+        totalLines = selectedShape.totalLines;
+        lineSpacing = selectedShape.lineSpacing;
+
+        if (index <= totalLines) {
+          selectedShape.draw();
+          index++;
+          requestAnimationFrame(animateLines);
+        } else {
+          index = 0;
+        }
+      }
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, width, height);
+      index = 0;
+    }
+  </script>
+</html>
